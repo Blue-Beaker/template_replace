@@ -10,7 +10,7 @@ def listRecursive(folder:str,suffix:str=""):
         filepath=os.path.join(folder,file)
         if(os.path.isdir(filepath)):
             filesList.extend(listRecursive(filepath,suffix))
-        if(file.endswith(suffix)):
+        elif(file.endswith(suffix)):
             filesList.append(filepath)
     return filesList
 
