@@ -1,7 +1,7 @@
 import os,sys
 import shutil
 from os import path
-
+DRY_RUN=False
 def listRecursive(folder:str,suffix:str=""):
     filesList:list[str]=[]
     files=os.listdir(folder)
@@ -13,6 +13,23 @@ def listRecursive(folder:str,suffix:str=""):
         elif(file.endswith(suffix)):
             filesList.append(filepath)
     return filesList
+
+def renameRecursive(folder:str, replace_from:str,replace_to:str):
+    filesList:list[str]=[]
+    files=os.listdir(folder)
+    files.sort()
+    for file in files:
+        filepath=os.path.join(folder,file)
+        if(os.path.isdir(filepath)):
+            filesList.extend(renameRecursive(filepath,replace_from,replace_to))
+
+        renamed=replaceKeepCase(file,replace_from,replace_to)
+        if(renamed!=file):
+            if(not DRY_RUN):
+                os.rename(os.path.join(folder,file),os.path.join(folder,renamed))
+            filesList.append(f"{os.path.join(folder,file)}->{os.path.join(folder,renamed)}")
+    return filesList
+
 
 def replaceKeepCase(stringToReplace:str,replaceFrom:str,replaceTo:str)->str:
     i=0
@@ -71,5 +88,5 @@ if (__name__=="__main__"):
         inputResult2=input("String to replace to [ExampleMod2]:")
         replaceTo=inputResult2 if inputResult2.__len__()>=0 else "ExampleMod2"
 
-    batchRename(rootPath,replaceFrom,replaceTo)
-    
+    fileList=renameRecursive(rootPath,replaceFrom,replaceTo)
+    print(fileList)
