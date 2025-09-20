@@ -1,7 +1,14 @@
 import os,sys
 import shutil
 from os import path
+import mimetypes
+
 DRY_RUN=False
+
+def is_binary_file(file_path):
+    mime_type, _ = mimetypes.guess_type(file_path)
+    return mime_type is None or not mime_type.startswith('text')
+
 def listRecursive(folder:str,suffix:str=""):
     filesList:list[str]=[]
     files=os.listdir(folder)
@@ -89,4 +96,14 @@ if (__name__=="__main__"):
         replaceTo=inputResult2 if inputResult2.strip()!="" else "ExampleMod2"
 
     fileList=renameRecursive(rootPath,replaceFrom,replaceTo)
+
+    for relFile in listRecursive(rootPath):
+        file=os.path.join(rootPath, relFile)
+        if(is_binary_file(file)):
+            continue
+        with open(file, "r") as f:
+            lines=f.readlines()
+        with open(file, "w") as f:
+            for line in lines:
+                f.write(replaceKeepCase(line,replaceFrom,replaceTo))
     print(fileList)
