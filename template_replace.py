@@ -1,13 +1,10 @@
 import os,sys
 import shutil
 from os import path
-import mimetypes
+import traceback
+from binaryornot.check import is_binary
 
 DRY_RUN=False
-
-def is_binary_file(file_path):
-    mime_type, _ = mimetypes.guess_type(file_path)
-    return mime_type is None or not mime_type.startswith('text')
 
 def listRecursive(folder:str,suffix:str=""):
     filesList:list[str]=[]
@@ -60,11 +57,11 @@ def replaceKeepCase(stringToReplace:str,replaceFrom:str,replaceTo:str)->str:
         else:
             replaced.append(replaceTo)
         
-        print(found,startingIndex,endIndex)
+        # print(found,startingIndex,endIndex)
 
         i=endIndex
 
-    print(replaced)
+    # print(replaced)
     return "".join(replaced)
 
 
@@ -97,13 +94,14 @@ if (__name__=="__main__"):
 
     fileList=renameRecursive(rootPath,replaceFrom,replaceTo)
 
-    for relFile in listRecursive(rootPath):
-        file=os.path.join(rootPath, relFile)
-        if(is_binary_file(file)):
-            continue
-        with open(file, "r") as f:
-            lines=f.readlines()
-        with open(file, "w") as f:
-            for line in lines:
-                f.write(replaceKeepCase(line,replaceFrom,replaceTo))
     print(fileList)
+    for file in listRecursive(rootPath):
+        try:
+            with open(file, "r") as f:
+                lines=f.readlines()
+            with open(file, "w") as f:
+                for line in lines:
+                    f.write(replaceKeepCase(line,replaceFrom,replaceTo))
+        except Exception as e:
+            if(not isinstance(e, UnicodeDecodeError)):
+                print(file,e)
