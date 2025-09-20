@@ -72,7 +72,7 @@ def batchRename(folder:str,replaceFrom:str,replaceTo:str):
         shutil.move(fromName,toName)
 
 if (__name__=="__main__"):
-    print(replaceKeepCase("examplemod.dwaoduioewrda.ExampleMod.dwaeoajexampleMod","examplemod","NewName"))
+    # print(replaceKeepCase("examplemod.dwaoduioewrda.ExampleMod.dwaeoajexampleMod","examplemod","NewName"))
     if(sys.argv.__len__()<=1):
         rootPath=input("Path to do batch rename:")
     else:
@@ -83,10 +83,10 @@ if (__name__=="__main__"):
         replaceTo=sys.argv[3]
     else:
         inputResult=input("String to replace from [ExampleMod]:")
-        replaceFrom=inputResult if inputResult.__len__()>=0 else "ExampleMod"
+        replaceFrom=inputResult if inputResult.strip()!="" else "ExampleMod"
             
         inputResult2=input("String to replace to [ExampleMod2]:")
-        replaceTo=inputResult2 if inputResult2.__len__()>=0 else "ExampleMod2"
+        replaceTo=inputResult2 if inputResult2.strip()!="" else "ExampleMod2"
 
     fileList=renameRecursive(rootPath,replaceFrom,replaceTo)
     print(fileList)
